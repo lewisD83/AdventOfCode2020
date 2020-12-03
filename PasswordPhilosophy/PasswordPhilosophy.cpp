@@ -20,8 +20,7 @@ int main()
 		std::cout << "Can't open file!";
 	}
 
-	int invalidPasswords = 0;
-	int loopCount = 0;
+	int validPasswords = 0;
 
 	// Read stream line by line
 	for (std::string line; std::getline(source, line);)
@@ -51,13 +50,48 @@ int main()
 			}
 		}
 
-		if (count < lowerLimit || count > upperLimit)
+		if (count >= lowerLimit && count <= upperLimit)
 		{
-			invalidPasswords++;
+			validPasswords++;
 		}
 	}
 
-	printf("Invalid Passwords %d", invalidPasswords);
+	printf("Valid Passwords %d", validPasswords);
+
+	validPasswords = 0;
+	source.clear(0);
+	source.seekg(0);
+
+	// Read stream line by line
+	for (std::string line; std::getline(source, line);)
+	{
+		// Make a stream for the line itself
+		std::istringstream in(line);
+
+		// Read in the x and y coords
+		std::string policy, checkLetter, password;
+		in >> policy;
+		in >> checkLetter;
+		in >> password;
+
+		size_t pos = policy.find("-");
+		std::string lowerPositionStr = policy.substr(0, pos);
+		std::string upperPositionStr = policy.substr(pos + 1);
+
+		int lowerPosition = stoi(lowerPositionStr) - 1;
+		int upperPosition = stoi(upperPositionStr) - 1;
+
+		if (password[lowerPosition] == checkLetter[0] || password[upperPosition] == checkLetter[0])
+		{
+			if (password[lowerPosition] != password[upperPosition])
+			{
+				validPasswords++;
+			}
+		}
+	}
+
+
+	printf("Valid Passwords %d", validPasswords);
 
 	
 }
